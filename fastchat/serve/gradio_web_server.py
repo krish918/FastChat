@@ -56,10 +56,17 @@ enable_moderation = False
 
 active_suggestion_category = "devops"
 suggestions = {
-    "Devops": "Generate a docker compose for",
+    "Devops": """Write a Jenkins CI pipeline in groovy using shared libraries \n
+compile the code in this repo https://github.com/path/to/repo\n
+push the image to https://hub.docker.com/path/to/image \n
+clean workspace \n
+install testsuite https://github.com/test-suite/path\n
+Run a smoke test using CNCF testsuite and generate a test report in .csv format\n
+Run a bandit scan https://hub.docker.com/path/to/image""",
     "Documentions": "Provide documentation for",
     "Code Review": "Please review follow code",
-    "Test Cases": "Suggest test cases for",
+    "Test Cases": """Given the below scenario please generate all the positive and negative test cases and test cases should be in format - Test Scenarios, Precondition, Steps and Expected Results\n
+Scenario:""",
 }
 
 learn_more_md = """
