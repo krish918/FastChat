@@ -542,14 +542,13 @@ def build_single_model_ui(models):
 ![Intel](https://www.intel.in/content/dam/logos/intel-header-logo.svg)
 # Welcome to NEX SOFTWARE Next Gen AI
 
-### Choose a model to chat with
 """
 
     state = gr.State()
     # model_description_md = get_model_description_md(models)
     gr.Markdown(notice_markdown, elem_id="notice_markdown")
 
-    with gr.Row(elem_id="model_selector_row"):
+    with gr.Row(elem_id="model_selector_row", visible=False) as mode_selector_row:
         model_selector = gr.Dropdown(
             choices=models,
             value=models[0] if len(models) > 0 else "",
@@ -563,7 +562,7 @@ def build_single_model_ui(models):
     with gr.Row():
         with gr.Column(scale=10):
             suggestion_dd_input = gr.Dropdown(
-                list(suggestions.keys()), show_label=False
+                list(suggestions.keys()), label="Category"
             )
         with gr.Column(scale=20):
             textbox = gr.Textbox(
