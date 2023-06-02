@@ -60,6 +60,13 @@ current_prompts = list()
 
 suggestions = {
     "Devops": [
+        """Write a Jenkins CI pipeline in groovy using shared libraries \n
+compile the code in this repo https://github.com/path/to/repo\n
+push the image to https://hub.docker.com/path/to/image \n
+clean workspace \n
+install testsuite https://github.com/test-suite/path\n
+Run a smoke test using CNCF testsuite and generate a test report in .csv format\n
+Run a bandit scan https://hub.docker.com/path/to/image""",
         "Write a Jenkins pipeline in groovy",
         "Print the IP address and hostname",
         "Create a workspace folder in home dir using the sudo command",
