@@ -55,19 +55,81 @@ controller_url = None
 enable_moderation = False
 
 active_suggestion_category = "devops"
+
+current_prompts = list()
+
 suggestions = {
-    "Devops": """Write a Jenkins CI pipeline in groovy using shared libraries \n
-compile the code in this repo https://github.com/path/to/repo\n
-push the image to https://hub.docker.com/path/to/image \n
-clean workspace \n
-install testsuite https://github.com/test-suite/path\n
-Run a smoke test using CNCF testsuite and generate a test report in .csv format\n
-Run a bandit scan https://hub.docker.com/path/to/image""",
-    "Documentions": "Provide documentation for",
-    "Code Review": "Please review follow code",
-    "Test Cases": """Given the below scenario please generate all the positive and negative test cases and test cases should be in format - Test Scenarios, Precondition, Steps and Expected Results\n
-Scenario:""",
+    "Devops": [
+        "Write a Jenkins pipeline in groovy",
+        "Print the IP address and hostname",
+        "Create a workspace folder in home dir using the sudo command",
+        "Provide adequate permissions to that folder",
+        "Define the home dir as a variable",
+        "Clone the code into the workspace https://github.com/stereolabs/zed-docker.git",
+        "Print the folder path  ",
+        "Docker login using token dckr_pat_BY8afnlGmK9BbqvSKMy4bHNs3S0",
+        "Run a docker build in path legacy/2.8/ubuntu1804/cuda10.2/devel",
+        "Push the image to https://hub.docker.com/repository/docker/pradeei/chatgpt/",
+        "Clone the CNF testsuite",
+        "Set the environment for the CNF testsuite",
+        "Run a test using CNF testsuite and generate a nice test report in .csv & .html format",
+        "Run a bandit scan https://hub.docker.com/r/path/to/image",
+        "Generate a scan report in .csv format",
+        "Need the pipeline to send notifications to the user post completion",
+        "Cleanup the workspace",
+    ],
+    "Documentions": [
+        """Create 300 words paragraph  
+1. Ledge Park enables our developers ecosystem to quickly and easily build, test and deploy and manage solutions\n
+2. distributed edge for a variety of verticals.\n
+3. developer concept to implementation \n
+4. various development and coding capabilities, including no-code, low-code, and significant-code\n
+5. A graphical user interface with visual design tools is exposed to facilitate the no-code and low-code paradigms\n
+6. built atop the Intel platform services and exposes some higher-level services of its own\n
+7. Testing-as-a-Service, Build-as-a-Service, Runtime-Operational-Control-as-a-Service (ROCaaS), and Release-as-a-Service.\n
+Add a catchy header and 200 words description
+""",
+        """
+Create 300 words paragraph for Ledge Park \n
+Detection -yoloX, SSD, ATSS; classification RESNET \n
+1. decode, encode: H264 codec support, \n
+2. preprocessing: support crop, scale, resize, \n
+3. watermarks (overlay) \n
+Add a catchy header and 200 words description 
+""",
+    ],
+    "Test Cases": [
+        """Given the below scenario please generate all the positive and negative test cases and test cases should be in format - Test Scenarios, Precondition, Steps and Expected Results 
+Scenario: \n
+Given User is logged in and navigate to AI Model page.\n 
+When Creates new project with valid details. \n
+Then User should be displayed with Dataset selection page and user should be able to select the dataset from available options and click Next. \n
+And User should be displayed with Model Type selection page with options as ATSS, YOLOX, SSD. \n
+And user click on Train button and model training should get started successfully. \n
+And user should be displayed with new version for created model """,
+        """Write few test cases to test Dynamic Refresh Rate Switching in windows""",
+        """What is difference between Intel XE graphics and Intel Arc graphics, Provide the test cases to verify and test it""",
+        """Generate all combinations of positive and negative test cases for below api and output test case should have format like Test Scenario, Preconditions, Steps and expected result \n
+EndPoint: /projects \n
+Method: POST \n
+payload: {"name":"value", "type":"type"} \n
+Valid Response Code: 200 \n
+Valid Response: {"message":"Success"} \n
+Invalid Response Code: 404 \n
+Invalid Response: {"error": "Please provide the valid value"} \n
+Invalid Response Code: 409 \n
+Invalid Response: {"error": "Conflict value"} \n
+Invalid Response Code: 422 \n
+Invalid Response: {"error": "unprocessable entity"}""",
+    ],
+    "Code Review": [
+        "do a code review and suggest\n improvements https://github.com/path/to/file"
+    ],
+    "Unit Tests": [
+        "Create test 10 case names from url https://github.com/path/to/file"
+    ],
 }
+
 
 learn_more_md = """
 ### License
@@ -521,13 +583,21 @@ def setOutputs():
     return output
 
 
-def update_suggestions(choice):
+def select_prompt_category(choice):
     global suggestions
-    suggestion = ""
+    global current_prompts
+    print("CURRENT BEFORE", current_prompts)
     if choice:
-        suggestion = suggestions[choice]
+        current_prompts = suggestions.get(choice)
+        print("CURRENT AFTER", current_prompts)
 
-    return suggestion
+    return gr.Dropdown.update(
+        choices=current_prompts, label=choice + " Prompts", visible=True
+    )
+
+
+def update_suggestions(choice):
+    return choice
 
 
 def execute_suggestion(index):
@@ -559,10 +629,16 @@ def build_single_model_ui(models):
     chatbot = grChatbot(
         elem_id="chatbot", label="Scroll down and start chatting", visible=False
     ).style(height=550)
+
     with gr.Row():
         with gr.Column(scale=10):
             suggestion_dd_input = gr.Dropdown(
                 list(suggestions.keys()), label="Category"
+            )
+            prompt_selector = gr.Dropdown(
+                list(["Option 1", "option 2", "option 3"]),
+                interactive=True,
+                visible=False,
             )
         with gr.Column(scale=20):
             textbox = gr.Textbox(
@@ -574,9 +650,11 @@ def build_single_model_ui(models):
             send_btn = gr.Button(value="Send", visible=False)
 
     suggestion_dd_input.change(
-        fn=update_suggestions,
-        inputs=[suggestion_dd_input],
-        outputs=[textbox],
+        fn=select_prompt_category, inputs=suggestion_dd_input, outputs=prompt_selector
+    )
+
+    prompt_selector.change(
+        fn=update_suggestions, inputs=prompt_selector, outputs=textbox
     )
 
     with gr.Row(visible=False) as button_row:
