@@ -592,7 +592,7 @@ def select_prompt_category(choice):
         print("CURRENT AFTER", current_prompts)
 
     return gr.Dropdown.update(
-        choices=current_prompts, label=choice + " Prompts", visible=True
+        choices=current_prompts, label=choice + " Prompts", visible=True, value=""
     )
 
 
