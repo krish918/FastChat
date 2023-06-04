@@ -250,6 +250,8 @@ def chat_loop(
     num_gpus: int,
     max_gpu_memory: str,
     load_8bit: bool,
+    wbits: int,
+    groupsize: int,
     cpu_offloading: bool,
     conv_template: Optional[str],
     temperature: float,
@@ -260,7 +262,7 @@ def chat_loop(
 ):
     # Model
     model, tokenizer = load_model(
-        model_path, device, num_gpus, max_gpu_memory, load_8bit, cpu_offloading, debug
+        model_path, device, num_gpus, max_gpu_memory, load_8bit, wbits, groupsize, cpu_offloading, debug
     )
     is_chatglm = "chatglm" in str(type(model)).lower()
     is_fastchat_t5 = "t5" in str(type(model)).lower()

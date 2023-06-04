@@ -25,6 +25,7 @@ from transformers import (
 
 from fastchat.conversation import Conversation, get_conv_template
 from fastchat.model.compression import load_compress_model
+from fastchat.serve.load_gptq_model import load_quantized
 from fastchat.model.monkey_patch_non_inplace import (
     replace_llama_attn_with_non_inplace_operations,
 )
@@ -98,6 +99,8 @@ def load_model(
     num_gpus: int,
     max_gpu_memory: Optional[str] = None,
     load_8bit: bool = False,
+    wbits: int,
+    groupsize: int,
     cpu_offloading: bool = False,
     debug: bool = False,
 ):
@@ -279,6 +282,19 @@ class AlpacaAdapter(BaseAdapter):
 
     def get_default_conv_template(self, model_path: str) -> Conversation:
         return get_conv_template("alpaca")
+
+class GptqAdapter(BaseAdapter):
+    """Model adapter for GPTQ 4-bit quantized models"""
+
+    def match(self, model_path: str):
+        return "gptq" in model_path.lower() or "4bit" in model_path.lower()
+
+    def load_model(self, model_path: str, from_pretrained_kwargs: dict):
+        print("Loading GPTQ quantized model...")
+        tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=False)
+        model = load_quantized(model_path)
+        return model, tokenizer
+
 
 
 class ChatGLMAdapter(BaseAdapter):
@@ -531,6 +547,7 @@ register_model_adapter(VicunaAdapter)
 register_model_adapter(T5Adapter)
 register_model_adapter(KoalaAdapter)
 register_model_adapter(AlpacaAdapter)
+register_model_adapter(GptqAdapter)
 register_model_adapter(ChatGLMAdapter)
 register_model_adapter(DollyV2Adapter)
 register_model_adapter(OasstPythiaAdapter)

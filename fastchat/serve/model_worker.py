@@ -66,6 +66,8 @@ class ModelWorker:
         model_name,
         device,
         num_gpus,
+        wbits,
+        groupsize,
         max_gpu_memory,
         load_8bit=False,
         cpu_offloading=False,
@@ -80,7 +82,7 @@ class ModelWorker:
 
         logger.info(f"Loading the model {self.model_name} on worker {worker_id} ...")
         self.model, self.tokenizer = load_model(
-            model_path, device, num_gpus, max_gpu_memory, load_8bit, cpu_offloading
+            model_path, device, num_gpus, max_gpu_memory, load_8bit, wbits, groupsize, cpu_offloading
         )
         if self.tokenizer.pad_token == None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
@@ -401,6 +403,8 @@ if __name__ == "__main__":
     parser.add_argument("--limit-model-concurrency", type=int, default=5)
     parser.add_argument("--stream-interval", type=int, default=2)
     parser.add_argument("--no-register", action="store_true")
+    parser.add_argument("--wbits", type=int, default = 0)
+    parser.add_argument("--groupsize", type=int, default = 0)
     args = parser.parse_args()
     logger.info(f"args: {args}")
 
@@ -420,8 +424,11 @@ if __name__ == "__main__":
         args.model_name,
         args.device,
         args.num_gpus,
+        args.wbits,
+        args.groupsize,
         args.max_gpu_memory,
         args.load_8bit,
         args.cpu_offloading,
     )
+
     uvicorn.run(app, host=args.host, port=args.port, log_level="info")

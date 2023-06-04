@@ -17,6 +17,8 @@ dependencies = [
     "prompt_toolkit>=3.0.0", "pydantic", "requests", "rich>=10.0.0", "sentencepiece",
     "shortuuid", "shortuuid", "tiktoken", "tokenizers>=0.12.1", "torch",
     "transformers>=4.28.0,<4.29.0", "uvicorn", "wandb",
+    "requests", "sentencepiece", "tokenizers==0.12.1",
+    "safetensors",
 ]
 
 [project.optional-dependencies]

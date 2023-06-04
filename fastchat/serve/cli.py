@@ -163,6 +163,8 @@ def main(args):
             args.num_gpus,
             args.max_gpu_memory,
             args.load_8bit,
+            args.wbits,
+            args.groupsize,
             args.cpu_offloading,
             args.conv_template,
             args.temperature,
@@ -196,5 +198,7 @@ if __name__ == "__main__":
         action="store_true",
         help="Print useful debug information (e.g., prompts)",
     )
+    parser.add_argument("--wbits", type=int, default = 0)
+    parser.add_argument("--groupsize", type=int, default = 0)
     args = parser.parse_args()
     main(args)
