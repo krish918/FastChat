@@ -99,8 +99,8 @@ def load_model(
     num_gpus: int,
     max_gpu_memory: Optional[str] = None,
     load_8bit: bool = False,
-    wbits: int,
-    groupsize: int,
+    wbits: int = 0,
+    groupsize: int = 0,
     cpu_offloading: bool = False,
     debug: bool = False,
 ):
