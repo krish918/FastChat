@@ -63,6 +63,7 @@ def get_model_adapter(model_path: str) -> BaseAdapter:
     """Get a model adapter for a model_path."""
     for adapter in model_adapters:
         if adapter.match(model_path):
+            print(f"Loaded Adapter : {adapter.__name__}")
             return adapter
     raise ValueError(f"No valid model adapter for {model_path}")
 
@@ -287,6 +288,7 @@ class GptqAdapter(BaseAdapter):
     """Model adapter for GPTQ 4-bit quantized models"""
 
     def match(self, model_path: str):
+        print(f"Matching model path : {model_path}")
         return "gptq" in model_path.lower() or "4bit" in model_path.lower()
 
     def load_model(self, model_path: str, from_pretrained_kwargs: dict):
@@ -543,11 +545,11 @@ class H2OGPTAdapter(BaseAdapter):
 
 # Note: the registration order matters.
 # The one registered earlier has a higher matching priority.
+register_model_adapter(GptqAdapter)
 register_model_adapter(VicunaAdapter)
 register_model_adapter(T5Adapter)
 register_model_adapter(KoalaAdapter)
 register_model_adapter(AlpacaAdapter)
-register_model_adapter(GptqAdapter)
 register_model_adapter(ChatGLMAdapter)
 register_model_adapter(DollyV2Adapter)
 register_model_adapter(OasstPythiaAdapter)
